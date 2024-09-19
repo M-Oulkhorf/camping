@@ -1,0 +1,201 @@
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Hôte : 127.0.0.1:3306
+-- Généré le : jeu. 19 sep. 2024 à 08:53
+-- Version du serveur : 11.2.2-MariaDB
+-- Version de PHP : 8.2.13
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Base de données : `camping`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `animateur`
+--
+
+DROP TABLE IF EXISTS `animateur`;
+CREATE TABLE IF NOT EXISTS `animateur` (
+  `idAnimateur` int(11) NOT NULL AUTO_INCREMENT,
+  `nomAnimateur` varchar(500) NOT NULL,
+  `prenomAnimateur` varchar(500) NOT NULL,
+  `mailAnimateur` varchar(500) NOT NULL,
+  `telephoneAnimateur` varchar(500) NOT NULL,
+  PRIMARY KEY (`idAnimateur`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+
+--
+-- Déchargement des données de la table `animateur`
+--
+
+INSERT INTO `animateur` (`idAnimateur`, `nomAnimateur`, `prenomAnimateur`, `mailAnimateur`, `telephoneAnimateur`) VALUES
+(1, 'Dupont', 'Jean', 'jean.dupont@example.com', '0123456789'),
+(2, 'Martin', 'Claire', 'claire.martin@example.com', '0987654321'),
+(3, 'Leclerc', 'Paul', 'paul.leclerc@example.com', '0147852369'),
+(4, 'Durand', 'Sophie', 'sophie.durand@example.com', '0178923456'),
+(5, 'Moreau', 'Luc', 'luc.moreau@example.com', '0192837465');
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `animation`
+--
+
+DROP TABLE IF EXISTS `animation`;
+CREATE TABLE IF NOT EXISTS `animation` (
+  `idAnimation` int(11) NOT NULL AUTO_INCREMENT,
+  `libelleAnimation` varchar(500) NOT NULL,
+  PRIMARY KEY (`idAnimation`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+
+--
+-- Déchargement des données de la table `animation`
+--
+
+INSERT INTO `animation` (`idAnimation`, `libelleAnimation`) VALUES
+(1, 'Concert de Jazz'),
+(2, 'Atelier de Peinture'),
+(3, 'Séance de Yoga'),
+(4, 'Projection de Film'),
+(5, 'Conférence sur l\'Astronomie');
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `animer`
+--
+
+DROP TABLE IF EXISTS `animer`;
+CREATE TABLE IF NOT EXISTS `animer` (
+  `idAnimateur` int(11) NOT NULL,
+  `idCreneau` int(11) NOT NULL,
+  PRIMARY KEY (`idAnimateur`,`idCreneau`),
+  KEY `animer_creneau0_FK` (`idCreneau`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+
+--
+-- Déchargement des données de la table `animer`
+--
+
+INSERT INTO `animer` (`idAnimateur`, `idCreneau`) VALUES
+(1, 1),
+(2, 2),
+(3, 3),
+(4, 4),
+(5, 5);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `creneau`
+--
+
+DROP TABLE IF EXISTS `creneau`;
+CREATE TABLE IF NOT EXISTS `creneau` (
+  `idCreneau` int(11) NOT NULL AUTO_INCREMENT,
+  `heureCreneau` time NOT NULL,
+  `dateCreneau` date NOT NULL,
+  `dureeCreneau` int(11) NOT NULL,
+  `nbPlacesCreneau` int(11) NOT NULL,
+  `idAnimation` int(11) NOT NULL,
+  `idLieu` int(11) NOT NULL,
+  PRIMARY KEY (`idCreneau`),
+  KEY `creneau_animation_FK` (`idAnimation`),
+  KEY `creneau_lieu0_FK` (`idLieu`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+
+--
+-- Déchargement des données de la table `creneau`
+--
+
+INSERT INTO `creneau` (`idCreneau`, `heureCreneau`, `dateCreneau`, `dureeCreneau`, `nbPlacesCreneau`, `idAnimation`, `idLieu`) VALUES
+(1, '18:00:00', '2024-09-15', 120, 100, 1, 1),
+(2, '10:00:00', '2024-09-16', 90, 20, 2, 2),
+(3, '07:00:00', '2024-09-17', 60, 30, 3, 3),
+(4, '20:00:00', '2024-09-18', 150, 200, 4, 4),
+(5, '14:00:00', '2024-09-19', 90, 50, 5, 5);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `lieu`
+--
+
+DROP TABLE IF EXISTS `lieu`;
+CREATE TABLE IF NOT EXISTS `lieu` (
+  `idLieu` int(11) NOT NULL AUTO_INCREMENT,
+  `libelleLieu` varchar(500) NOT NULL,
+  `cordoneesLieu` varchar(500) NOT NULL,
+  PRIMARY KEY (`idLieu`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+
+--
+-- Déchargement des données de la table `lieu`
+--
+
+INSERT INTO `lieu` (`idLieu`, `libelleLieu`, `cordoneesLieu`) VALUES
+(1, 'Salle des Fêtes', '123 Rue de la Lumière, 75001 Paris'),
+(2, 'Atelier Art', '456 Avenue des Arts, 75002 Paris'),
+(3, 'Studio Yoga', '789 Boulevard de la Santé, 75003 Paris'),
+(4, 'Cinéma Central', '321 Rue du Cinéma, 75004 Paris'),
+(5, 'Auditorium Galaxie', '654 Rue des Étoiles, 75005 Paris');
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `utilisateur`
+--
+
+DROP TABLE IF EXISTS `utilisateur`;
+CREATE TABLE IF NOT EXISTS `utilisateur` (
+  `identifiant` varchar(50) NOT NULL,
+  `mdp` varchar(500) NOT NULL,
+  PRIMARY KEY (`identifiant`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+
+--
+-- Déchargement des données de la table `utilisateur`
+--
+
+INSERT INTO `utilisateur` (`identifiant`, `mdp`) VALUES
+('admin', 'admin123'),
+('user1', 'password1'),
+('user2', 'password2'),
+('user3', 'password3'),
+('user4', 'password4');
+
+--
+-- Contraintes pour les tables déchargées
+--
+
+--
+-- Contraintes pour la table `animer`
+--
+ALTER TABLE `animer`
+  ADD CONSTRAINT `animer_animateur_FK` FOREIGN KEY (`idAnimateur`) REFERENCES `animateur` (`idAnimateur`),
+  ADD CONSTRAINT `animer_creneau0_FK` FOREIGN KEY (`idCreneau`) REFERENCES `creneau` (`idCreneau`);
+
+--
+-- Contraintes pour la table `creneau`
+--
+ALTER TABLE `creneau`
+  ADD CONSTRAINT `creneau_animation_FK` FOREIGN KEY (`idAnimation`) REFERENCES `animation` (`idAnimation`),
+  ADD CONSTRAINT `creneau_lieu0_FK` FOREIGN KEY (`idLieu`) REFERENCES `lieu` (`idLieu`);
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
