@@ -1,5 +1,9 @@
 package com.example.camping;
 
+/* vu par M. le développeur associé
+
+ */
+
 public class Animateur {
     private int idAnimateur;
     private String nomAnimateur;
