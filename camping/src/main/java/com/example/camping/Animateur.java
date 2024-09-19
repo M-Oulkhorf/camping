@@ -1,7 +1,7 @@
 package com.example.camping;
 
 /* vu par M. le développeur associé
-
+Et par moi aussi
  */
 
 public class Animateur {
