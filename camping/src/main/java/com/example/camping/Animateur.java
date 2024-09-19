@@ -1,10 +1,4 @@
 package com.example.camping;
-
-/* vu par M. le développeur associé
-Et par moi aussi
- */
-//bsduiclvfn
-// nouveau modif
 public class Animateur {
     private int idAnimateur;
     private String nomAnimateur;
