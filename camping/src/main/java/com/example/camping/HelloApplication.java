@@ -7,6 +7,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 // test réarrangement du code
+// et encore un ...
 public class HelloApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
