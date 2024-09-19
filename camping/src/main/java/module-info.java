@@ -3,6 +3,7 @@ module com.example.camping {
     requires javafx.fxml;
 
     requires org.kordamp.bootstrapfx.core;
+    requires java.sql;
 
     opens com.example.camping to javafx.fxml;
     exports com.example.camping;
