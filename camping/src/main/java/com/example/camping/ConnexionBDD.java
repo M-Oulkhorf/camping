@@ -18,7 +18,7 @@ public class ConnexionBDD {
         catch (SQLException ex) {
             Alert a = new Alert(Alert.AlertType.ERROR);
             a.setTitle("Erreur");
-            a.setContentText("Erreur de connexion à la base de données : " + ex.getMessage());
+            a.setContentText("Erreur de connexion à la base de données : "+ex.getMessage());
             a.showAndWait();
             return null;
         }
