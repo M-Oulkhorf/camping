@@ -1,5 +1,12 @@
 package com.example.camping;
 
+import javafx.scene.control.Alert;
+
+import java.sql.*;
+import java.util.ArrayList;
+
+import static java.lang.StringTemplate.STR;
+
 public class Lieu {
     private int idLieu;
     private String libelleLieu;
@@ -34,4 +41,157 @@ public class Lieu {
     public void setCordoneesLieu(String cordoneesLieu) {
         this.cordoneesLieu = cordoneesLieu;
     }
+
+    public static ArrayList<Lieu> getAll() {
+        Connection c = ConnexionBDD.initialiserConnexion();
+        ArrayList<Lieu> leslieux = new ArrayList<Lieu>();
+        if (c != null) {
+            try {
+                String requete = "SELECT * FROM lieu ORDER BY id ASC";
+                Statement stmt = c.createStatement();
+                ResultSet res = stmt.executeQuery(requete);
+
+                while (res.next()) {
+                    int _idLieu = res.getInt("idLieu");
+                    String _libelleLieu = res.getString("libelleLieu");
+                    String _cordoneesLieu = res.getString("cordoneesLieu ");
+                    Lieu e = new Lieu(_idLieu, _libelleLieu, _cordoneesLieu);
+                    leslieux.add(e);
+                }
+            } catch (SQLException ex) {
+                Alert a = new Alert(Alert.AlertType.ERROR);
+                a.setTitle("Erreur");
+                a.setContentText("Erreur survenue : " + ex.getMessage());
+                a.showAndWait();
+            }
+        }
+
+        return leslieux;
+    }
+
+    public static Lieu getById(Integer idLieuRecherche) {
+        Connection c = ConnexionBDD.initialiserConnexion();
+        Lieu unLieu = null;
+
+        if (c != null) {
+            try {
+                String requete = "SELECT * FROM Lieu WHERE id = ?";
+                Statement stmt = c.createStatement();
+                PreparedStatement prep = c.prepareStatement(requete);
+                prep.setInt(1, idLieuRecherche);
+                ResultSet res = prep.executeQuery();
+
+                while (res.next()) {
+                    int _idLieu = res.getInt("idLieu");
+                    String _libelleLieu = res.getString("libelleLieu");
+                    String _cordoneesLieu = res.getString("cordoneesLieu ");
+                    unLieu = new Lieu(_idLieu, _libelleLieu, _cordoneesLieu);
+                }
+            } catch (SQLException ex) {
+                Alert a = new Alert(Alert.AlertType.ERROR);
+                a.setTitle("Erreur");
+                a.setContentText("Erreur survenue : " + ex.getMessage());
+                a.showAndWait();
+            }
+        }
+
+        return unLieu;
+    }
+
+    public boolean save() {
+        Connection c = ConnexionBDD.initialiserConnexion();
+        if (c != null) {
+            int etat = 0;
+
+            try {
+                String requete1 = "SELECT COUNT(*) AS existe FROM Lieu WHERE id = ?";
+
+                Statement stmt = c.createStatement();
+                PreparedStatement prep = c.prepareStatement(requete1);
+                prep.setInt(1, this.idLieu);
+                ResultSet resultats = prep.executeQuery();
+                resultats.next();
+
+                int nb = resultats.getInt("existe");
+
+                if (nb == 0) {
+                    // L'espèce n'existe pas : on la créer
+                    String requete2 = "INSERT INTO Lieu (idLieu ,libelleLieu, cordoneesLieu) VALUES (?, ?, ?, ?)";
+                    Statement stmt2 = c.createStatement();
+                    PreparedStatement prep2 = c.prepareStatement(requete2);
+                    prep2.setInt(1, this.idLieu);
+                    prep2.setString(2, this.libelleLieu);
+                    prep2.setString(3, this.cordoneesLieu);
+                    etat = prep2.executeUpdate();
+                } else {
+                    // L'espèce existe déjà : on la modifie
+                    String requete2 = "UPDATE espece SET libelleLieu = ?, cordoneesLieu = ? WHERE id = ?";
+                    Statement stmt2 = c.createStatement();
+                    PreparedStatement prep2 = c.prepareStatement(requete2);
+                    prep2.setString(1, this.libelleLieu);
+                    prep2.setString(2, this.cordoneesLieu);
+                    prep2.setInt(3, this.idLieu);
+                    etat = prep2.executeUpdate();
+                }
+
+                if (etat == 0) {
+                    return false;
+                } else {
+                    return true;
+                }
+            } catch (SQLException ex) {
+                Alert a = new Alert(Alert.AlertType.ERROR);
+                a.setTitle("Erreur");
+                a.setContentText("Erreur survenue : " + ex.getMessage());
+                a.showAndWait();
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    public boolean delete() {
+        Connection c = ConnexionBDD.initialiserConnexion();
+        if (c != null) {
+            try {
+                String requete2 = "DELETE FROM creneau WHERE idLieu= ?";
+
+                Statement stmt2 = c.createStatement();
+                PreparedStatement prep2 = c.prepareStatement(requete2);
+                prep2.setInt(1, this.idLieu);
+                prep2.executeUpdate();
+
+                String requete1 = "DELETE FROM Lieu WHERE id = ?";
+
+                Statement stmt = c.createStatement();
+                PreparedStatement prep = c.prepareStatement(requete1);
+                prep.setInt(1, this.idLieu);
+                int resultat = prep.executeUpdate();
+
+                if (resultat == 0) {
+                    return false;
+                } else {
+                    return true;
+                }
+            } catch (SQLException ex) {
+                Alert a = new Alert(Alert.AlertType.ERROR);
+                a.setTitle("Erreur");
+                a.setContentText("Erreur survenue : " + ex.getMessage());
+                a.showAndWait();
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return this.libelleLieu+" "+this.cordoneesLieu ;
+    }
 }
+
+
+
+
