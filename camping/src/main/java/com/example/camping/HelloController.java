@@ -1,7 +1,10 @@
 package com.example.camping;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Button;
 import javafx.scene.control.Alert;
@@ -25,7 +28,8 @@ public class HelloController {
 
     @FXML
     private Button connexionButton;
-
+    @FXML
+    private ListView listviewCreaneaux;
     @FXML
     private void handleConnexion() {
         String identifiant = identifiantField.getText();
@@ -66,5 +70,18 @@ public class HelloController {
                 errorAlert.showAndWait();
             }
         }
+    }
+    public void affichageListeViewCreneau() {
+        if (listviewCreaneaux != null) {
+            listviewCreaneaux.getItems().clear();
+            ObservableList<Creneau> lesCreneaux = FXCollections.observableArrayList(Creneau.getAll());
+            listviewCreaneaux.setItems(lesCreneaux);
+        } else {
+            System.out.println("Erreur : affichage Creneaux est null");
+        }
+    }
+    @FXML
+    public void initialize() {
+        affichageListeViewCreneau();
     }
 }
