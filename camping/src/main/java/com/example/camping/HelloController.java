@@ -29,6 +29,16 @@ public class HelloController {
     @FXML
     private Button connexionButton;
     @FXML
+    private ListView listviewAnimateur;
+    @FXML
+    private TextField nomField;
+    @FXML
+    private TextField prenomField;
+    @FXML
+    private TextField emailField;
+    @FXML
+    private TextField telephoneField;
+    @FXML
     private ListView listviewCreaneaux;
     @FXML
     private void handleConnexion() {
@@ -80,6 +90,7 @@ public class HelloController {
             System.out.println("Erreur : affichage Creneaux est null");
         }
     }
+
     @FXML
     public void initialize() {
         affichageListeViewCreneau();
