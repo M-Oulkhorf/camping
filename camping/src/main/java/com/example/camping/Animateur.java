@@ -68,7 +68,7 @@ public class Animateur {
 
         if(c != null) {
             try {
-                String requete = "SELECT * FROM animateur ORDER BY id ASC";
+                String requete = "SELECT * FROM animateur ORDER BY idAnimateur ASC";
                 Statement stmt = c.createStatement();
                 ResultSet res = stmt.executeQuery(requete);
 
@@ -93,16 +93,16 @@ public class Animateur {
 
         return lesAnimateurs;
     }
-    public static Animateur getByIdAnimateur(String idEspeceRecherche) {
+    public static Animateur getByIdAnimateur(int idAnimateurRecherche) {
         Connection c = ConnexionBDD.initialiserConnexion();
         Animateur unAnimateur = null;
 
         if(c != null) {
             try {
-                String requete = "SELECT * FROM espece WHERE idAnimateur = ?";
+                String requete = "SELECT * FROM animateur WHERE idAnimateur = ?";
                 Statement stmt = c.createStatement();
                 PreparedStatement prep = c.prepareStatement(requete);
-                prep.setString(1, idEspeceRecherche);
+                prep.setInt(1, idAnimateurRecherche);
                 ResultSet res = prep.executeQuery();
 
                 res.next();
@@ -131,36 +131,38 @@ public class Animateur {
             int etat = 0;
 
             try {
-                String requete1 = "SELECT COUNT(*) AS existe FROM espece WHERE id = ?";
+                String requete1 = "SELECT COUNT(*) AS existe FROM animateur WHERE idAnimateur = ?";
 
                 Statement stmt = c.createStatement();
                 PreparedStatement prep = c.prepareStatement(requete1);
-                prep.setString(1, this.id);
+                prep.setInt(1, this.idAnimateur);
                 ResultSet resultats = prep.executeQuery();
                 resultats.next();
 
                 int nb = resultats.getInt("existe");
 
                 if(nb == 0) {
-                    // L'espèce n'existe pas : on la créer
-                    String requete2 = "INSERT INTO espece (id, nom, nomScientifique, idContinent) VALUES (?, ?, ?, ?)";
+                    // L'animateur n'existe pas : on la créer
+                    String requete2 = "INSERT INTO animateur (nomAnimateur, PrenomAnimateur, mailAnimateur,telephoneAnimateur) VALUES (?, ?, ?, ?)";
                     Statement stmt2 = c.createStatement();
                     PreparedStatement prep2 = c.prepareStatement(requete2);
-                    prep2.setString(1, this.id);
-                    prep2.setString(2, this.nom);
-                    prep2.setString(3, this.nomScientifique);
-                    prep2.setString(4, this.idContinent);
+                    prep2.setString(1, this.nomAnimateur);
+                    prep2.setString(2, this.prenomAnimateur);
+                    prep2.setString(3, this.mailAnimateur);
+                    prep2.setString(4, this.telephoneAnimateur);
+
                     etat = prep2.executeUpdate();
                 }
                 else {
                     // L'espèce existe déjà : on la modifie
-                    String requete2 = "UPDATE espece SET nom = ?, nomScientifique = ?, idContinent = ? WHERE id = ?";
+                    String requete2 = "UPDATE espece SET nomAnimateur = ?, PrenomAnimateur = ?, mailAnimateur = ?,telephoneAnimateur=? WHERE idAnimateur = ?";
                     Statement stmt2 = c.createStatement();
                     PreparedStatement prep2 = c.prepareStatement(requete2);
-                    prep2.setString(1, this.nom);
-                    prep2.setString(2, this.nomScientifique);
-                    prep2.setString(3, this.idContinent);
-                    prep2.setString(4, this.id);
+                    prep2.setString(1, this.nomAnimateur);
+                    prep2.setString(2, this.prenomAnimateur);
+                    prep2.setString(3, this.mailAnimateur);
+                    prep2.setString(4, this.telephoneAnimateur);
+
                     etat = prep2.executeUpdate();
                 }
 
@@ -174,7 +176,7 @@ public class Animateur {
             catch(SQLException ex) {
                 Alert a = new Alert(Alert.AlertType.ERROR);
                 a.setTitle("Erreur");
-                a.setContentText(STR."Erreur survenue : \{ex.getMessage()}");
+                a.setContentText("Erreur survenue : "+ex.getMessage());
                 a.showAndWait();
                 return false;
             }
@@ -188,18 +190,18 @@ public class Animateur {
         Connection c = ConnexionBDD.initialiserConnexion();
         if(c != null) {
             try {
-                String requete2 = "DELETE FROM arbre WHERE idEspece = ?";
+                String requete2 = "DELETE FROM animer WHERE idAnimateur = ?";
 
                 Statement stmt2 = c.createStatement();
                 PreparedStatement prep2 = c.prepareStatement(requete2);
-                prep2.setString(1, this.id);
+                prep2.setInt(1, this.idAnimateur);
                 prep2.executeUpdate();
 
-                String requete1 = "DELETE FROM espece WHERE id = ?";
+                String requete1 = "DELETE FROM animateur WHERE idAnimateur = ?";
 
                 Statement stmt = c.createStatement();
                 PreparedStatement prep = c.prepareStatement(requete1);
-                prep.setString(1, this.id);
+                prep.setInt(1, this.idAnimateur);
                 int resultat = prep.executeUpdate();
 
                 if(resultat == 0) {
@@ -212,7 +214,7 @@ public class Animateur {
             catch(SQLException ex) {
                 Alert a = new Alert(Alert.AlertType.ERROR);
                 a.setTitle("Erreur");
-                a.setContentText(STR."Erreur survenue : \{ex.getMessage()}");
+                a.setContentText("Erreur survenue : "+ex.getMessage());
                 a.showAndWait();
                 return false;
             }
@@ -224,9 +226,7 @@ public class Animateur {
 
     @Override
     public String toString() {
-        return STR."\{this.id} - \{this.nom} (\{this.nomScientifique})";
+        return this.nomAnimateur+" "+this.prenomAnimateur+" "+this.mailAnimateur+" "+this.telephoneAnimateur;
     }
-}
-
 
 }
