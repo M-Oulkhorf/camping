@@ -5,7 +5,7 @@ import javafx.scene.control.Alert;
 import java.sql.*;
 import java.util.ArrayList;
 
-import static java.lang.StringTemplate.STR;
+
 
 public class Lieu {
     private int idLieu;

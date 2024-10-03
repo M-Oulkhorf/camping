@@ -5,7 +5,7 @@ import javafx.scene.control.Alert;
 import java.sql.*;
 import java.util.ArrayList;
 
-import static java.lang.StringTemplate.STR;
+
 
 public class Animateur {
     //sqdfyqkuikre
@@ -130,7 +130,6 @@ public class Animateur {
         Connection c = ConnexionBDD.initialiserConnexion();
         if(c != null) {
             int etat = 0;
-
             try {
                 String requete1 = "SELECT COUNT(*) AS existe FROM animateur WHERE idAnimateur = ?";
 
@@ -151,19 +150,26 @@ public class Animateur {
                     prep2.setString(2, this.prenomAnimateur);
                     prep2.setString(3, this.mailAnimateur);
                     prep2.setString(4, this.telephoneAnimateur);
-
                     etat = prep2.executeUpdate();
+                    String requete3 = "SELECT idAnimateur FROM animateur WHERE nomAnimateur=? Order by idAnimateur ASC;";
+                    PreparedStatement prep3 = c.prepareStatement(requete3);
+                    prep3.setString(1, this.nomAnimateur);
+                    ResultSet res = prep3.executeQuery();
+                    res.next();
+                    int _idAnimateur = res.getInt("idAnimateur");
+                    this.idAnimateur = _idAnimateur;
                 }
                 else {
-                    // L'espèce existe déjà : on la modifie
-                    String requete2 = "UPDATE espece SET nomAnimateur = ?, PrenomAnimateur = ?, mailAnimateur = ?,telephoneAnimateur=? WHERE idAnimateur = ?";
+
+                    String requete2 = "UPDATE animateur SET nomAnimateur = ?, PrenomAnimateur = ?, mailAnimateur = ?,telephoneAnimateur=? WHERE idAnimateur = ?";
                     Statement stmt2 = c.createStatement();
+
                     PreparedStatement prep2 = c.prepareStatement(requete2);
                     prep2.setString(1, this.nomAnimateur);
                     prep2.setString(2, this.prenomAnimateur);
                     prep2.setString(3, this.mailAnimateur);
                     prep2.setString(4, this.telephoneAnimateur);
-
+                    prep2.setInt(5, this.idAnimateur);
                     etat = prep2.executeUpdate();
                 }
 
