@@ -1,6 +1,6 @@
 package com.example.camping;
-import javafx.scene.control.Alert;
 
+import javafx.scene.control.Alert;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -25,6 +25,7 @@ public class Creneau {
         this.idLieu = idLieu;
     }
 
+    // Getters and Setters
     public int getIdCreneau() {
         return idCreneau;
     }
@@ -80,9 +81,11 @@ public class Creneau {
     public void setIdLieu(int idLieu) {
         this.idLieu = idLieu;
     }
+
+    // Méthode pour récupérer tous les créneaux à partir de la base de données
     public static ArrayList<Creneau> getAll() {
         Connection c = ConnexionBDD.initialiserConnexion();
-        ArrayList<Creneau> lesCrenaux = new ArrayList<Creneau>();
+        ArrayList<Creneau> lesCreneaux = new ArrayList<>();
 
         if(c != null) {
             try {
@@ -90,17 +93,19 @@ public class Creneau {
                 Statement stmt = c.createStatement();
                 ResultSet res = stmt.executeQuery(requete);
 
-                while (res.next())
-                {
+                while (res.next()) {
+                    int idCreneau = res.getInt("idCreneau");
                     LocalDate _dateCreneau = res.getDate("dateCreneau").toLocalDate();
-                    LocalTime _heureCreneau = res.getTime("dateCreneau").toLocalTime();
+                    LocalTime _heureCreneau = res.getTime("heureCreneau").toLocalTime();
                     int _dureeCreneau = res.getInt("dureeCreneau");
                     int _nbPlacesCreneau = res.getInt("nbPlacesCreneau");
-                    Creneau a = new Creneau(1,_heureCreneau, _dateCreneau, _dureeCreneau, _nbPlacesCreneau, 0,0);
-                    lesCrenaux.add(a);
+                    int _idAnimation = res.getInt("idAnimation");
+                    int _idLieu = res.getInt("idLieu");
+
+                    Creneau a = new Creneau(idCreneau, _heureCreneau, _dateCreneau, _dureeCreneau, _nbPlacesCreneau, _idAnimation, _idLieu);
+                    lesCreneaux.add(a);
                 }
-            }
-            catch (SQLException ex) {
+            } catch (SQLException ex) {
                 Alert a = new Alert(Alert.AlertType.ERROR);
                 a.setTitle("Erreur");
                 a.setContentText("Erreur survenue : " + ex.getMessage());
@@ -108,34 +113,48 @@ public class Creneau {
             }
         }
 
-        return lesCrenaux;
+        return lesCreneaux;
     }
+
+    // Méthode pour enregistrer ou mettre à jour un créneau
     public boolean save() {
         Connection c = ConnexionBDD.initialiserConnexion();
         if (c != null) {
-            int etat = 0;
             try {
-                String requete1 = "INSERT INTO creneau (heureCreneau, dateCreneau, dureeCreneau, nbPlacesCreneau, idAnimation, idLieu) VALUES (?, ?, ?, ?, ?, ?)";
-                PreparedStatement prep = c.prepareStatement(requete1);
-                prep.setTime(1, Time.valueOf(this.heureCreneau));
-                prep.setDate(2, Date.valueOf(this.dateCreneau));
-                prep.setInt(3, this.dureeCreneau);
-                prep.setInt(4, this.nbPlacesCreneau);
-                prep.setInt(5, this.idAnimation);
-                prep.setInt(6, this.idLieu);
-                ResultSet resultats = prep.executeQuery();
-                resultats.next();
-                String requete2 = "SELECT idCreneau FROM `` WHERE heureCreneau=? and dateCreneau=?;";
-                PreparedStatement prep2 = c.prepareStatement(requete2);
-                prep2.setTime(1, Time.valueOf(this.heureCreneau));
-                prep2.setDate(2, Date.valueOf(this.dateCreneau));
-                ResultSet res = prep2.executeQuery();
+                // Vérifier si le créneau existe déjà
+                String checkQuery = "SELECT COUNT(*) AS existe FROM creneau WHERE idCreneau = ?";
+                PreparedStatement checkStmt = c.prepareStatement(checkQuery);
+                checkStmt.setInt(1, this.idCreneau);
+                ResultSet res = checkStmt.executeQuery();
                 res.next();
-                int _idCreneau = res.getInt("idCreneau");
-                this.idCreneau = _idCreneau;
-                return etat != 0;
-            }
-            catch (SQLException ex) {
+                int exists = res.getInt("existe");
+                if (exists == 0) {
+                    // Si le créneau n'existe pas, l'insérer
+                    String insertQuery = "INSERT INTO creneau (heureCreneau, dateCreneau, dureeCreneau, nbPlacesCreneau, idAnimation, idLieu) VALUES (?, ?, ?, ?, ?, ?)";
+                    PreparedStatement insertStmt = c.prepareStatement(insertQuery);
+                    insertStmt.setTime(1, Time.valueOf(this.heureCreneau));
+                    insertStmt.setDate(2, Date.valueOf(this.dateCreneau));
+                    insertStmt.setInt(3, this.dureeCreneau);
+                    insertStmt.setInt(4, this.nbPlacesCreneau);
+                    insertStmt.setInt(5, this.idAnimation);
+                    insertStmt.setInt(6, this.idLieu);
+                    insertStmt.executeUpdate();
+                } else {
+                    // Si le créneau existe, le mettre à jour
+                    String updateQuery = "UPDATE creneau SET heureCreneau = ?, dateCreneau = ?, dureeCreneau = ?, nbPlacesCreneau = ?, idAnimation = ?, idLieu = ? WHERE idCreneau = ?";
+                    PreparedStatement updateStmt = c.prepareStatement(updateQuery);
+                    updateStmt.setTime(1, Time.valueOf(this.heureCreneau));
+                    updateStmt.setDate(2, Date.valueOf(this.dateCreneau));
+                    updateStmt.setInt(3, this.dureeCreneau);
+                    updateStmt.setInt(4, this.nbPlacesCreneau);
+                    updateStmt.setInt(5, this.idAnimation);
+                    updateStmt.setInt(6, this.idLieu);
+                    updateStmt.setInt(7, this.idCreneau);
+                    updateStmt.executeUpdate();
+                }
+
+                return true;
+            } catch (SQLException ex) {
                 Alert a = new Alert(Alert.AlertType.ERROR);
                 a.setTitle("Erreur");
                 a.setContentText("Erreur survenue : " + ex.getMessage());
@@ -146,8 +165,33 @@ public class Creneau {
             return false;
         }
     }
+
+    // Méthode pour supprimer un créneau
+    public boolean delete() {
+        Connection c = ConnexionBDD.initialiserConnexion();
+        if (c != null) {
+            try {
+                String deleteQuery = "DELETE FROM creneau WHERE idCreneau = ?";
+                PreparedStatement deleteStmt = c.prepareStatement(deleteQuery);
+                deleteStmt.setInt(1, this.idCreneau);
+                int result = deleteStmt.executeUpdate();
+
+                return result > 0;
+            } catch (SQLException ex) {
+                Alert a = new Alert(Alert.AlertType.ERROR);
+                a.setTitle("Erreur");
+                a.setContentText("Erreur survenue : " + ex.getMessage());
+                a.showAndWait();
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    // Redéfinition de la méthode toString pour afficher un créneau de façon lisible
     @Override
     public String toString() {
-        return this.dateCreneau + " " + this.heureCreneau +" | "+ this.dureeCreneau + "min | " +this.nbPlacesCreneau+" places | "+ this.idAnimation;
+        return this.dateCreneau + " " + this.heureCreneau + " | " + this.dureeCreneau + " min | " + this.nbPlacesCreneau + " places | Animation: " + this.idAnimation + " | Lieu: " + this.idLieu;
     }
 }
