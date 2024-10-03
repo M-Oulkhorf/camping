@@ -64,7 +64,7 @@ public class HelloController {
             } catch (SQLException e) {
                 Alert errorAlert = new Alert(Alert.AlertType.ERROR);
                 errorAlert.setTitle("Erreur");
-                errorAlert.setContentText("Erreur lors de la vérification des identifiants : " + e.getMessage());
+                errorAlert.setContentText("Erreur de la vérification des identifiants : " + e.getMessage());
                 errorAlert.showAndWait();
             }
         }
