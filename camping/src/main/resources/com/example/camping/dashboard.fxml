@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="505.0" prefWidth="820.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
+<TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="505.0" prefWidth="820.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.camping.DashboardController">
   <tabs>
     <Tab text="Accueil">
       <content>
@@ -49,7 +49,7 @@
                            <children>
                               <HBox prefHeight="416.0" prefWidth="350.0">
                                  <children>
-                                    <ListView fx:id="listviewCreaneaux" prefHeight="416.0" prefWidth="354.0" />
+                                    <ListView fx:id="listviewCreneaux" prefHeight="416.0" prefWidth="354.0" />
                                  </children>
                               </HBox>
                               <HBox alignment="CENTER" prefHeight="63.0" prefWidth="350.0" spacing="15.0">
