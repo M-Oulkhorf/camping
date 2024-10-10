@@ -40,11 +40,15 @@ public class DashboardController {
     @FXML
     private ListView<Lieu> listviewLieuCreneau;
     @FXML
+    private ListView<Animateur> listviewAnimateurCreneau;
+    @FXML
     private ListView listviewLieu;
     @FXML
     private TextField libelleLieu;
     @FXML
     private TextField coordonneesLieu;
+    @FXML
+    private TextField libelleAnimation;
     public boolean isedit = false; // Indique si on est en mode édition
     public int idTemporaire = 0;
     @FXML
@@ -146,6 +150,26 @@ public class DashboardController {
         }
     }
 
+    public void affichagelistviewLieuCreneau() {
+        if (listviewLieuCreneau != null) {
+            listviewLieuCreneau.getItems().clear();
+            ObservableList<Lieu> lesLieux = FXCollections.observableArrayList(Lieu.getAll());
+            listviewLieuCreneau.setItems(lesLieux);
+        } else {
+            System.out.println("Erreur: affichage Animations est null");
+        }
+    }
+
+    public void affichagelistviewAnimateurCreneau() {
+        if (listviewAnimateurCreneau != null) {
+            listviewAnimateurCreneau.getItems().clear();
+            ObservableList<Animateur> lesAnimateurs = FXCollections.observableArrayList(Animateur.getAllAnimateur());
+            listviewAnimateurCreneau.setItems(lesAnimateurs);
+        } else {
+            System.out.println("Erreur: affichage Animations est null");
+        }
+    }
+
     @FXML
     public void initialize() {
         affichageListeViewCreneau();
@@ -153,7 +177,8 @@ public class DashboardController {
         actualisationListeLieu();
         actualisationListeListeAnimateur();
         actualiserTable();
-
+        affichagelistviewLieuCreneau();
+        affichagelistviewAnimateurCreneau();
     }
     public void actualisationListeLieu() {
         listviewLieu.getItems().clear();
@@ -186,6 +211,26 @@ public class DashboardController {
             a.setContentText("lieu enregistrée avec succès !");
             a.showAndWait();
             actualisationListeLieu();
+        }
+        else {
+            Alert a = new Alert(Alert.AlertType.ERROR);
+            a.setTitle("Erreur");
+            a.setContentText("Une erreur est survenue pendant l'enregistrement");
+            a.showAndWait();
+        }
+    }
+
+    @FXML
+    public void buttonAjouterAnimation() {
+        boolean resultat;
+        Animation animation = new Animation(this.idTemporaire,libelleAnimation.getText());
+        resultat = animation.save();
+        if(resultat) {
+            Alert a = new Alert(Alert.AlertType.CONFIRMATION);
+            a.setTitle("Succès");
+            a.setContentText("lieu enregistrée avec succès !");
+            a.showAndWait();
+            affichageListeViewAnimation();
         }
         else {
             Alert a = new Alert(Alert.AlertType.ERROR);
@@ -263,15 +308,6 @@ public class DashboardController {
             a.showAndWait();
         }
     }
-
-
-
-
-
-
-
-
-
     public void actualisationListeListeAnimateur() {
         listviewAnimateur.getItems().clear();
         ObservableList<Animateur> lesAnimateurs = FXCollections.observableArrayList(Animateur.getAllAnimateur());
