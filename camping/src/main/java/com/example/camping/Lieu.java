@@ -104,7 +104,7 @@ public class Lieu {
             int etat = 0;
 
             try {
-                String requete1 = "SELECT COUNT(*) AS existe FROM Lieu WHERE id = ?";
+                String requete1 = "SELECT COUNT(*) AS existe FROM Lieu WHERE idLieu = ?";
 
                 Statement stmt = c.createStatement();
                 PreparedStatement prep = c.prepareStatement(requete1);
@@ -116,16 +116,21 @@ public class Lieu {
 
                 if (nb == 0) {
                     // L'espèce n'existe pas : on la créer
-                    String requete2 = "INSERT INTO Lieu (idLieu ,libelleLieu, cordoneesLieu) VALUES (?, ?, ?, ?)";
+                    String requete2 = "INSERT INTO Lieu (libelleLieu, cordoneesLieu) VALUES (?, ?, ?)";
                     Statement stmt2 = c.createStatement();
                     PreparedStatement prep2 = c.prepareStatement(requete2);
-                    prep2.setInt(1, this.idLieu);
-                    prep2.setString(2, this.libelleLieu);
-                    prep2.setString(3, this.cordoneesLieu);
+                    prep2.setString(1, this.libelleLieu);
+                    prep2.setString(2, this.cordoneesLieu);
                     etat = prep2.executeUpdate();
+                    String requete3 = "SELECT idLieu FROM lieu WHERE libelleLieu=? Order by idLieu ASC;";
+                    PreparedStatement prep3 = c.prepareStatement(requete3);
+                    prep3.setInt(1, this.idLieu);
+                    ResultSet res = prep3.executeQuery();
+                    res.next();
+                    int _idLieu = res.getInt("idLieu");
+                    this.idLieu = _idLieu;
                 } else {
-                    // L'espèce existe déjà : on la modifie
-                    String requete2 = "UPDATE espece SET libelleLieu = ?, cordoneesLieu = ? WHERE id = ?";
+                    String requete2 = "UPDATE lieu SET libelleLieu = ?, cordoneesLieu = ? WHERE idLieu = ?";
                     Statement stmt2 = c.createStatement();
                     PreparedStatement prep2 = c.prepareStatement(requete2);
                     prep2.setString(1, this.libelleLieu);
@@ -162,7 +167,7 @@ public class Lieu {
                 prep2.setInt(1, this.idLieu);
                 prep2.executeUpdate();
 
-                String requete1 = "DELETE FROM Lieu WHERE id = ?";
+                String requete1 = "DELETE FROM Lieu WHERE idLieu = ?";
 
                 Statement stmt = c.createStatement();
                 PreparedStatement prep = c.prepareStatement(requete1);
