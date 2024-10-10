@@ -10,12 +10,12 @@ import java.util.ArrayList;
 public class Lieu {
     private int idLieu;
     private String libelleLieu;
-    private String cordoneesLieu;
+    private String coordoneesLieu;
 
     public Lieu(int idLieu, String libelleLieu, String cordoneesLieu) {
         this.idLieu = idLieu;
         this.libelleLieu = libelleLieu;
-        this.cordoneesLieu = cordoneesLieu;
+        this.coordoneesLieu = cordoneesLieu;
     }
 
     public int getIdLieu() {
@@ -35,11 +35,11 @@ public class Lieu {
     }
 
     public String getCordoneesLieu() {
-        return cordoneesLieu;
+        return coordoneesLieu;
     }
 
     public void setCordoneesLieu(String cordoneesLieu) {
-        this.cordoneesLieu = cordoneesLieu;
+        this.coordoneesLieu = cordoneesLieu;
     }
 
     public static ArrayList<Lieu> getAll() {
@@ -47,14 +47,14 @@ public class Lieu {
         ArrayList<Lieu> leslieux = new ArrayList<Lieu>();
         if (c != null) {
             try {
-                String requete = "SELECT * FROM lieu ORDER BY id ASC";
+                String requete = "SELECT * FROM lieu ORDER BY idLieu ASC";
                 Statement stmt = c.createStatement();
                 ResultSet res = stmt.executeQuery(requete);
 
                 while (res.next()) {
                     int _idLieu = res.getInt("idLieu");
                     String _libelleLieu = res.getString("libelleLieu");
-                    String _cordoneesLieu = res.getString("cordoneesLieu ");
+                    String _cordoneesLieu = res.getString("coordoneesLieu");
                     Lieu e = new Lieu(_idLieu, _libelleLieu, _cordoneesLieu);
                     leslieux.add(e);
                 }
@@ -75,7 +75,7 @@ public class Lieu {
 
         if (c != null) {
             try {
-                String requete = "SELECT * FROM Lieu WHERE id = ?";
+                String requete = "SELECT * FROM Lieu WHERE idLieu = ?";
                 Statement stmt = c.createStatement();
                 PreparedStatement prep = c.prepareStatement(requete);
                 prep.setInt(1, idLieuRecherche);
@@ -84,7 +84,7 @@ public class Lieu {
                 while (res.next()) {
                     int _idLieu = res.getInt("idLieu");
                     String _libelleLieu = res.getString("libelleLieu");
-                    String _cordoneesLieu = res.getString("cordoneesLieu ");
+                    String _cordoneesLieu = res.getString("coordoneesLieu");
                     unLieu = new Lieu(_idLieu, _libelleLieu, _cordoneesLieu);
                 }
             } catch (SQLException ex) {
@@ -116,11 +116,11 @@ public class Lieu {
 
                 if (nb == 0) {
                     // L'espèce n'existe pas : on la créer
-                    String requete2 = "INSERT INTO Lieu (libelleLieu, cordoneesLieu) VALUES (?, ?, ?)";
+                    String requete2 = "INSERT INTO Lieu (libelleLieu, coordoneesLieu) VALUES (?,?)";
                     Statement stmt2 = c.createStatement();
                     PreparedStatement prep2 = c.prepareStatement(requete2);
                     prep2.setString(1, this.libelleLieu);
-                    prep2.setString(2, this.cordoneesLieu);
+                    prep2.setString(2, this.coordoneesLieu);
                     etat = prep2.executeUpdate();
                     String requete3 = "SELECT idLieu FROM lieu WHERE libelleLieu=? Order by idLieu ASC;";
                     PreparedStatement prep3 = c.prepareStatement(requete3);
@@ -130,11 +130,11 @@ public class Lieu {
                     int _idLieu = res.getInt("idLieu");
                     this.idLieu = _idLieu;
                 } else {
-                    String requete2 = "UPDATE lieu SET libelleLieu = ?, cordoneesLieu = ? WHERE idLieu = ?";
+                    String requete2 = "UPDATE lieu SET libelleLieu = ?, coordoneesLieu = ? WHERE idLieu = ?";
                     Statement stmt2 = c.createStatement();
                     PreparedStatement prep2 = c.prepareStatement(requete2);
                     prep2.setString(1, this.libelleLieu);
-                    prep2.setString(2, this.cordoneesLieu);
+                    prep2.setString(2, this.coordoneesLieu);
                     prep2.setInt(3, this.idLieu);
                     etat = prep2.executeUpdate();
                 }
@@ -193,7 +193,7 @@ public class Lieu {
 
     @Override
     public String toString() {
-        return this.libelleLieu+" "+this.cordoneesLieu ;
+        return this.libelleLieu+" "+this.coordoneesLieu ;
     }
 }
 

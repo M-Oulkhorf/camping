@@ -41,7 +41,7 @@ public class DashboardController {
     @FXML
     private TextField libelleLieu;
     @FXML
-    private TextField CoordonneesLieu;
+    private TextField coordonneesLieu;
     public boolean isedit = false; // Indique si on est en mode édition
     public int idTemporaire = 0;
     public void affichageListeViewCreneau() {
@@ -68,30 +68,32 @@ public class DashboardController {
         affichageListeViewCreneau();
         affichageListeViewAnimation();
         actualisationListeLieu();
+        actualisationListeListeAnimateur();
+
     }
     public void actualisationListeLieu() {
-        listviewAnimateur.getItems().clear();
-        ObservableList<Animateur> lesAnimateurs = FXCollections.observableArrayList(Animateur.getAllAnimateur());
-        if (!lesAnimateurs.isEmpty()) {
-            listviewAnimateur.setItems(lesAnimateurs); // Lie la liste des animateurs au ListView
+        listviewLieu.getItems().clear();
+        ObservableList<Lieu> lesLieux = FXCollections.observableArrayList(Lieu.getAll());
+        if (!lesLieux.isEmpty()) {
+            listviewLieu.setItems(lesLieux); // Lie la liste des animateurs au ListView
         } else {
             System.out.println("Aucun animateur trouvé.");
         }
     }
     @FXML
     public void buttonActualiserLieu() {
-        actualisationListeListeAnimateur();
+      actualisationListeLieu();
     }
     @FXML
     public void buttonEnregistrerLieu() {
         boolean resultat;
         if (isedit){
-            Lieu lieu = new Lieu(this.idTemporaire,libelleLieu.getText(), CoordonneesLieu.getText());
+            Lieu lieu = new Lieu(this.idTemporaire,libelleLieu.getText(),coordonneesLieu.getText());
             resultat = lieu.save();
             this.isedit=false;
             this.idTemporaire=0;
         }else {
-            Lieu lieu = new Lieu(this.idTemporaire,libelleLieu.getText(), CoordonneesLieu.getText());
+            Lieu lieu = new Lieu(this.idTemporaire,libelleLieu.getText(),coordonneesLieu.getText());
             resultat = lieu.save();
         }
         if(resultat) {
@@ -99,7 +101,7 @@ public class DashboardController {
             a.setTitle("Succès");
             a.setContentText("lieu enregistrée avec succès !");
             a.showAndWait();
-            actualisationListeListeAnimateur();
+            actualisationListeLieu();
         }
         else {
             Alert a = new Alert(Alert.AlertType.ERROR);
@@ -108,6 +110,84 @@ public class DashboardController {
             a.showAndWait();
         }
     }
+
+    @FXML
+    public void buttonModifierLieu() {
+        Lieu lieu = (Lieu) listviewLieu.getSelectionModel().getSelectedItem();
+        if(lieu != null) {
+            libelleLieu.setText(lieu.getLibelleLieu());
+            coordonneesLieu.setText(lieu.getCordoneesLieu());
+            this.isedit=true;
+            this.idTemporaire=lieu.getIdLieu();
+        }
+        else {
+            Alert al = new Alert(Alert.AlertType.WARNING);
+            al.setTitle("Attention");
+            al.setContentText("Vous n'avez sélectionné aucun élément dans la liste");
+            al.showAndWait();
+        }
+    }
+
+    @FXML
+    public void buttonAnnulerLieu() {
+        Alert confirmation = new Alert(Alert.AlertType.INFORMATION);
+        confirmation.setTitle("Confirmation");
+        confirmation.setContentText("Êtes-vous sûr de vouloir annuler les modification en cours ?");
+        ButtonType yesButton = new ButtonType("Oui", ButtonType.YES.getButtonData());
+        ButtonType noButton = new ButtonType("Non", ButtonType.NO.getButtonData());
+        confirmation.getButtonTypes().setAll(yesButton, noButton);
+        confirmation.showAndWait();
+
+        if (confirmation.getResult() == yesButton) {
+            libelleLieu.setText("");
+            coordonneesLieu.setText("");
+        }
+    }
+
+    @FXML
+    public void buttonSupprimerLieu() {
+        Lieu lieu = (Lieu) listviewLieu.getSelectionModel().getSelectedItem();
+        if(lieu != null) {
+            Alert confirmation = new Alert(Alert.AlertType.INFORMATION);
+            confirmation.setTitle("Confirmation");
+            confirmation.setContentText("Êtes-vous sûr de vouloir supprimer ce lieu ?");
+            ButtonType yesButton = new ButtonType("Oui", ButtonType.YES.getButtonData());
+            ButtonType noButton = new ButtonType("Non", ButtonType.NO.getButtonData());
+            confirmation.getButtonTypes().setAll(yesButton, noButton);
+            confirmation.showAndWait();
+
+            if (confirmation.getResult() == yesButton) {
+                boolean resultat = lieu.delete();
+                if (resultat == true) {
+                    Alert a = new Alert(Alert.AlertType.CONFIRMATION);
+                    a.setTitle("Succès");
+                    a.setContentText("Animateur supprimée avec succès !");
+                    a.showAndWait();
+                    actualisationListeLieu();
+                } else {
+                    Alert a = new Alert(Alert.AlertType.ERROR);
+                    a.setTitle("Erreur");
+                    a.setContentText("Une erreur est survenue pendant la suppression");
+                    a.showAndWait();
+                }
+            }
+        }
+        else {
+            Alert a = new Alert(Alert.AlertType.WARNING);
+            a.setTitle("Attention");
+            a.setContentText("Vous n'avez sélectionné aucun élément dans la liste");
+            a.showAndWait();
+        }
+    }
+
+
+
+
+
+
+
+
+
     public void actualisationListeListeAnimateur() {
         listviewAnimateur.getItems().clear();
         ObservableList<Animateur> lesAnimateurs = FXCollections.observableArrayList(Animateur.getAllAnimateur());
