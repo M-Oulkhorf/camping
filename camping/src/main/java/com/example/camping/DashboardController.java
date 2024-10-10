@@ -179,6 +179,10 @@ public class DashboardController {
         actualiserTable();
         affichagelistviewLieuCreneau();
         affichagelistviewAnimateurCreneau();
+        listviewCreneaux.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        liteViewAnimation.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        listviewLieuCreneau.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        listviewAnimateurCreneau.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
     public void actualisationListeLieu() {
         listviewLieu.getItems().clear();
@@ -427,13 +431,15 @@ public class DashboardController {
     }
     @FXML
     public void clicBoutonModifierCreneau() {
-        Creneau c = (Creneau) listviewCreneaux.getSelectionModel().getSelectedItem();
-        if (c != null) {
-            // Charger les informations du créneau sélectionné dans les champs
-            heureField.setText(c.getHeureCreneau().toString());
-            dateField.setText(c.getDateCreneau().toString());
-            dureeField.setText(String.valueOf(c.getDureeCreneau()));  // Assurez-vous que duree est de type String ou convertissez-le
-            nbplaceField.setText(String.valueOf(c.getNbPlacesCreneau())); // Convertir en String
+        ObservableList<Creneau> selectedCreneaux = listviewCreneaux.getSelectionModel().getSelectedItems();
+        if (!selectedCreneaux.isEmpty()) {
+            // Pour chaque créneau sélectionné, mettre à jour les champs et les autres ListView
+            for (Creneau c : selectedCreneaux) {
+                heureField.setText(c.getHeureCreneau().toString());
+                dateField.setText(c.getDateCreneau().toString());
+                dureeField.setText(String.valueOf(c.getDureeCreneau()));
+                nbplaceField.setText(String.valueOf(c.getNbPlacesCreneau()));
+            }
         } else {
             // Afficher une alerte si aucun créneau n'est sélectionné
             Alert a = new Alert(Alert.AlertType.WARNING);
