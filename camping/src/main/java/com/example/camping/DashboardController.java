@@ -1,13 +1,16 @@
 package com.example.camping;
 
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -44,6 +47,86 @@ public class DashboardController {
     private TextField coordonneesLieu;
     public boolean isedit = false; // Indique si on est en mode édition
     public int idTemporaire = 0;
+    @FXML
+    private TableView<Creneau> tableViewActivites;
+
+    @FXML
+    private TableColumn<Creneau, LocalDate> colDate;
+
+    @FXML
+    private TableColumn<Creneau, LocalTime> colHeure;
+
+    @FXML
+    private TableColumn<Creneau, Integer> colDuree;
+
+    @FXML
+    private TableColumn<Creneau, Integer> colNbPlaces;
+
+    @FXML
+    private TableColumn<Creneau, String> colAnimation; // Pour le nom d'animation
+
+    @FXML
+    private TableColumn<Creneau, String> colLieu; // Pour le nom de lieu
+
+    private void actualiserTable() {
+        ObservableList<Creneau> listeCreneaux = FXCollections.observableArrayList(Creneau.getAllWeek());
+        tableViewActivites.setItems(listeCreneaux);
+        colDate.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getDateCreneau()));
+        colHeure.setCellValueFactory(cellData -> new SimpleObjectProperty<>(cellData.getValue().getHeureCreneau()));
+        colDuree.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getDureeCreneau()).asObject());
+        colNbPlaces.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getNbPlacesCreneau()).asObject());
+
+        colAnimation.setCellValueFactory(cellData -> {
+            int idAnimation = cellData.getValue().getIdAnimation();
+            return new SimpleObjectProperty<>(getNomAnimation(idAnimation));
+        });
+
+        colLieu.setCellValueFactory(cellData -> {
+            int idLieu = cellData.getValue().getIdLieu();
+            return new SimpleObjectProperty<>(getNomLieu(idLieu));
+        });
+    }
+
+    // Méthode pour récupérer le nom de l'animation par ID
+    private String getNomAnimation(int id) {
+        String nom = "";
+        Connection c = ConnexionBDD.initialiserConnexion();
+        if (c != null) {
+            try {
+                String query = "SELECT libelleAnimation FROM animation WHERE idAnimation = ?";
+                PreparedStatement stmt = c.prepareStatement(query);
+                stmt.setInt(1, id);
+                ResultSet res = stmt.executeQuery();
+                if (res.next()) {
+                    nom = res.getString("libelleAnimation");
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return nom;
+    }
+
+    // Méthode pour récupérer le nom du lieu par ID
+    private String getNomLieu(int id) {
+        String nom = "";
+        Connection c = ConnexionBDD.initialiserConnexion();
+        if (c != null) {
+            try {
+                String query = "SELECT libelleLieu FROM lieu WHERE idLieu = ?";
+                PreparedStatement stmt = c.prepareStatement(query);
+                stmt.setInt(1, id);
+                ResultSet res = stmt.executeQuery();
+                if (res.next()) {
+                    nom = res.getString("libelleLieu");
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return nom;
+    }
+
     public void affichageListeViewCreneau() {
         if (listviewCreneaux != null) {
             listviewCreneaux.getItems().clear();
@@ -69,6 +152,7 @@ public class DashboardController {
         affichageListeViewAnimation();
         actualisationListeLieu();
         actualisationListeListeAnimateur();
+        actualiserTable();
 
     }
     public void actualisationListeLieu() {

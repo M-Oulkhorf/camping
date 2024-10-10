@@ -2,6 +2,7 @@ package com.example.camping;
 
 import javafx.scene.control.Alert;
 import java.sql.*;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -92,6 +93,42 @@ public class Creneau {
                 String requete = "SELECT * FROM creneau WHERE dateCreneau >= CURRENT_DATE";
                 Statement stmt = c.createStatement();
                 ResultSet res = stmt.executeQuery(requete);
+
+                while (res.next()) {
+                    int idCreneau = res.getInt("idCreneau");
+                    LocalDate _dateCreneau = res.getDate("dateCreneau").toLocalDate();
+                    LocalTime _heureCreneau = res.getTime("heureCreneau").toLocalTime();
+                    int _dureeCreneau = res.getInt("dureeCreneau");
+                    int _nbPlacesCreneau = res.getInt("nbPlacesCreneau");
+                    int _idAnimation = res.getInt("idAnimation");
+                    int _idLieu = res.getInt("idLieu");
+
+                    Creneau a = new Creneau(idCreneau, _heureCreneau, _dateCreneau, _dureeCreneau, _nbPlacesCreneau, _idAnimation, _idLieu);
+                    lesCreneaux.add(a);
+                }
+            } catch (SQLException ex) {
+                Alert a = new Alert(Alert.AlertType.ERROR);
+                a.setTitle("Erreur");
+                a.setContentText("Erreur survenue : " + ex.getMessage());
+                a.showAndWait();
+            }
+        }
+
+        return lesCreneaux;
+    }
+    public static ArrayList<Creneau> getAllWeek() {
+        Connection c = ConnexionBDD.initialiserConnexion();
+        ArrayList<Creneau> lesCreneaux = new ArrayList<>();
+
+        if (c != null) {
+            try {
+                LocalDate debutSemaine = LocalDate.now().with(DayOfWeek.MONDAY);
+                LocalDate finSemaine = LocalDate.now().with(DayOfWeek.SUNDAY);
+                String requete = "SELECT * FROM creneau WHERE dateCreneau BETWEEN ? AND ?";
+                PreparedStatement stmt = c.prepareStatement(requete);
+                stmt.setDate(1, Date.valueOf(debutSemaine));
+                stmt.setDate(2, Date.valueOf(finSemaine));
+                ResultSet res = stmt.executeQuery();
 
                 while (res.next()) {
                     int idCreneau = res.getInt("idCreneau");
