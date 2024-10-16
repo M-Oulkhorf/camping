@@ -233,7 +233,7 @@ public class Animateur {
 
     @Override
     public String toString() {
-        return this.nomAnimateur+" "+this.prenomAnimateur+" "+this.mailAnimateur+" "+this.telephoneAnimateur;
+        return this.nomAnimateur+" "+this.prenomAnimateur+"  "+this.mailAnimateur+"  "+this.telephoneAnimateur;
     }
 
 }
