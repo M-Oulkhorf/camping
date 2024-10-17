@@ -1,32 +1,43 @@
 /* Style général pour le TabPane */
 .tab-pane {
-    -fx-background-color: #f0f0f0; /* Couleur de fond */
+    -fx-background-image: url('image2.jpeg'); /* Remplacez par le chemin de votre image */
+    -fx-background-size: cover; /* Couvre toute la zone */
+    -fx-background-position: center; /* Centre l'image */
 }
+.tab .tab-label {
+    -fx-text-fill: #ffffff; /* Couleur du texte des onglets */
+    -fx-font-size: 14px; /* Taille de la police */
+    -fx-font-weight: bold; /* Gras */
+}
+
 
 /* Style pour les onglets */
-.tab-header-area {
-    -fx-background-color: #13a7cd; /* Couleur d'arrière-plan des onglets */
+.tab {
+    -fx-text-fill: #ffffff; /* Couleur du texte des onglets */
+    -fx-font-size: 14px; /* Taille de la police des onglets */
+    -fx-background-color: #29a93e; /* Couleur de fond des onglets */
 }
 
-.tab {
-    -fx-text-fill: white; /* Couleur du texte des onglets */
-    -fx-font-size: 14px; /* Taille de la police des onglets */
+/* Couleur du texte des onglets sélectionnés */
+.tab:selected {
+    -fx-background-color: #2cbe56; /* Couleur de fond de l'onglet sélectionné */
 }
 
 /* Style pour le contenu des onglets */
 .tab-content {
     -fx-background-color: #ffffff; /* Couleur de fond du contenu */
     -fx-padding: 20; /* Espacement interne */
+    -fx-text-fill: #021a20; /* Couleur du texte */
 }
 
-/* Style pour le Label */
+/* Style pour les labels */
 .label {
-    -fx-text-fill: #021a20; /* Couleur du texte */
-    -fx-font-size: 11px; /* Taille de la police */
+    /* -fx-text-fill: #021a20; Couleur du texte des labels */
+    -fx-font-size: 12px; /* Taille de la police */
     -fx-font-weight: bold; /* Gras */
 }
 
-/* Style pour le TableView */
+/* Style pour la TableView */
 .table-view {
     -fx-border-color: #021a20; /* Bordure de la TableView */
     -fx-border-width: 1; /* Largeur de la bordure */
@@ -39,15 +50,16 @@
 
 /* Style pour les boutons */
 .button {
-    -fx-background-color: #021a20; /* Couleur de fond des boutons */
+    -fx-background-color: #29a93e; /* Couleur de fond des boutons */
     -fx-text-fill: white; /* Couleur du texte des boutons */
     -fx-border-radius: 10; /* Coins arrondis */
-    -fx-padding: 4; /* Espacement interne */
-    -fx-font-size: 12px; /* Taille de la police */
+    -fx-padding: 10 7 4 6; /* Espacement interne : haut, droite, bas, gauche */
+    -fx-font-size: 13px; /* Taille de la police */
 }
 
 .button:hover {
-    -fx-background-color: #13a7cd; /* Couleur de fond au survol */
+    -fx-background-color: #1b9e14; /* Couleur de fond au survol */
+    -fx-border-radius: 13px; /* Arrondi au survol */
 }
 
 /* Style pour les TextFields */
@@ -60,6 +72,17 @@
 
 /* Style pour les ListViews */
 .list-view {
-    -fx-border-color: #021a20; /* Bordure de la ListView */
+    -fx-border-color: #fff; /* Bordure de la ListView */
+    -fx-background-color: rgba(255, 255, 255, 0.9); /* Fond légèrement transparent */
     -fx-border-width: 1; /* Largeur de la bordure */
+    -fx-opacity: 0.9;
+}
+
+.list-view .list-cell {
+    -fx-text-fill: #000; /* Couleur du texte des cellules */
+}
+
+.list-view .list-cell:selected {
+    -fx-background-color: #29a93e; /* Couleur de fond de la cellule sélectionnée */
+    -fx-text-fill: white; /* Couleur du texte de la cellule sélectionnée */
 }
