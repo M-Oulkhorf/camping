@@ -1,0 +1,65 @@
+/* Style général pour le TabPane */
+.tab-pane {
+    -fx-background-color: #f0f0f0; /* Couleur de fond */
+}
+
+/* Style pour les onglets */
+.tab-header-area {
+    -fx-background-color: #13a7cd; /* Couleur d'arrière-plan des onglets */
+}
+
+.tab {
+    -fx-text-fill: white; /* Couleur du texte des onglets */
+    -fx-font-size: 14px; /* Taille de la police des onglets */
+}
+
+/* Style pour le contenu des onglets */
+.tab-content {
+    -fx-background-color: #ffffff; /* Couleur de fond du contenu */
+    -fx-padding: 20; /* Espacement interne */
+}
+
+/* Style pour le Label */
+.label {
+    -fx-text-fill: #021a20; /* Couleur du texte */
+    -fx-font-size: 11px; /* Taille de la police */
+    -fx-font-weight: bold; /* Gras */
+}
+
+/* Style pour le TableView */
+.table-view {
+    -fx-border-color: #021a20; /* Bordure de la TableView */
+    -fx-border-width: 1; /* Largeur de la bordure */
+}
+
+/* Style pour les colonnes de la TableView */
+.table-view .table-column {
+    -fx-text-fill: #021a20; /* Couleur du texte des colonnes */
+}
+
+/* Style pour les boutons */
+.button {
+    -fx-background-color: #021a20; /* Couleur de fond des boutons */
+    -fx-text-fill: white; /* Couleur du texte des boutons */
+    -fx-border-radius: 10; /* Coins arrondis */
+    -fx-padding: 4; /* Espacement interne */
+    -fx-font-size: 12px; /* Taille de la police */
+}
+
+.button:hover {
+    -fx-background-color: #13a7cd; /* Couleur de fond au survol */
+}
+
+/* Style pour les TextFields */
+.text-field {
+    -fx-background-color: rgba(255, 255, 255, 0.8); /* Fond blanc semi-transparent */
+    -fx-border-color: #021a20; /* Couleur de bord */
+    -fx-border-radius: 5; /* Coins arrondis */
+    -fx-padding: 5; /* Espacement interne */
+}
+
+/* Style pour les ListViews */
+.list-view {
+    -fx-border-color: #021a20; /* Bordure de la ListView */
+    -fx-border-width: 1; /* Largeur de la bordure */
+}
