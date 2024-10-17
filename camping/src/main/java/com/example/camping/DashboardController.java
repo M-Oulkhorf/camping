@@ -179,9 +179,6 @@ public class DashboardController {
         actualiserTable();
         affichagelistviewLieuCreneau();
         affichagelistviewAnimateurCreneau();
-        listviewCreneaux.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        liteViewAnimation.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        listviewLieuCreneau.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         listviewAnimateurCreneau.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
     public void actualisationListeLieu() {
