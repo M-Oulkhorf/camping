@@ -12,6 +12,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -37,23 +38,25 @@ public class HelloController {
         Connection connection = ConnexionBDD.initialiserConnexion();
         if (connection != null) {
             try {
-                String sql = "SELECT * FROM utilisateur WHERE identifiant = ? AND mdp = ?";
+                String sql = "SELECT * FROM utilisateur WHERE identifiant = ?";
                 PreparedStatement stmt = connection.prepareStatement(sql);
                 stmt.setString(1, identifiant);
-                stmt.setString(2, mdp);
-
                 ResultSet rs = stmt.executeQuery();
                 if (rs.next()) {
-                    // Charger le fichier FXML du dashboard
-                    try {
+                    String motDePasseHache = rs.getString("mdp");
+                    if (BCrypt.checkpw(mdp, motDePasseHache)) {
+                        // Charger le fichier FXML du dashboard
                         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/camping/dashboard.fxml"));
-                        Parent root = loader.load(); // Charger le FXML
+                        Parent root = loader.load();
                         Stage stage = (Stage) connexionButton.getScene().getWindow();
                         Scene scene = new Scene(root);
                         stage.setScene(scene);
                         stage.show();
-                    } catch (IOException e) {
-                        e.printStackTrace(); // Affiche les erreurs dans la console
+                    } else {
+                        Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                        errorAlert.setTitle("Erreur");
+                        errorAlert.setContentText("Identifiant ou mot de passe incorrect.");
+                        errorAlert.showAndWait();
                     }
                 } else {
                     Alert errorAlert = new Alert(Alert.AlertType.ERROR);
@@ -66,6 +69,8 @@ public class HelloController {
                 errorAlert.setTitle("Erreur");
                 errorAlert.setContentText("Erreur de la vérification des identifiants : " + e.getMessage());
                 errorAlert.showAndWait();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         }
     }

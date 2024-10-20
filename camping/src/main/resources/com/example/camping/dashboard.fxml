@@ -14,6 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.control.PasswordField?>
 <TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="505.0" prefWidth="820.0" stylesheets="@styl.css" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.camping.DashboardController">
   <tabs>
      <Tab text="Accueil">
@@ -276,5 +277,80 @@
             </AnchorPane>
          </content>
       </Tab>
+      <Tab text="Profile">
+         <content>
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+               <children>
+                  <HBox prefHeight="478.0" prefWidth="820.0">
+                     <children>
+                        <VBox prefHeight="478.0" prefWidth="797.0" spacing="20.0">
+                           <children>
+                              <HBox prefHeight="115.0" prefWidth="797.0" />
+                              <HBox alignment="CENTER" prefHeight="24.0" prefWidth="471.0" spacing="115.0">
+                                 <children>
+                                    <Label text="Mot de passe actuel:" textFill="WHITE" />
+                                    <PasswordField fx:id="currentMdp" />
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER" layoutX="10.0" layoutY="210.0" prefHeight="10.0" prefWidth="471.0" spacing="100.0">
+                                 <children>
+                                    <Label text="Nouveau mot de passe:" textFill="WHITE" />
+                                    <PasswordField fx:id="nouveauMdp" />
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER" layoutX="10.0" layoutY="205.0" prefHeight="10.0" prefWidth="471.0" spacing="32.0">
+                                 <children>
+                                    <Label text="Confirmer le nouveau mot de passe" textFill="WHITE" />
+                                    <PasswordField fx:id="confirmationMdp" />
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER" prefHeight="42.0" prefWidth="448.0" spacing="20.0">
+                                 <children>
+                                    <Button fx:id="changePasswordButton" mnemonicParsing="false" onAction="#handleChangePassword" prefHeight="33.0" prefWidth="177.0" text="Changer Mot de Passe" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+               </children>
+            </AnchorPane>
+         </content>
+      </Tab>
+      <!--  Ou cas d'ajouter un utilisateur de l'application
+      <Tab text="Ajouter">
+         <content>
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+               <children>
+                  <HBox prefHeight="478.0" prefWidth="820.0">
+                     <children>
+                        <VBox prefHeight="478.0" prefWidth="797.0" spacing="20.0">
+                           <children>
+                              <HBox prefHeight="115.0" prefWidth="797.0" />
+                              <HBox alignment="CENTER" prefHeight="24.0" prefWidth="471.0" spacing="115.0">
+                                 <children>
+                                    <Label text="identi" textFill="WHITE" />
+                                    <TextField fx:id="idField" />
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER" layoutX="10.0" layoutY="210.0" prefHeight="10.0" prefWidth="471.0" spacing="100.0">
+                                 <children>
+                                    <Label text="mdp" textFill="WHITE" />
+                                    <TextField fx:id="mdpField" />
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER" prefHeight="42.0" prefWidth="448.0" spacing="20.0">
+                                 <children>
+                                    <Button fx:id="enre" mnemonicParsing="false" onAction="#handleSaveButtonAction" prefHeight="33.0" prefWidth="177.0" text="Enregistrer" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+               </children>
+            </AnchorPane>
+         </content>
+      </Tab> -->
   </tabs>
 </TabPane>

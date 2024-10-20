@@ -16,6 +16,11 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class DashboardController {
     @FXML
@@ -74,7 +79,125 @@ public class DashboardController {
 
     @FXML
     private TableColumn<Creneau, String> colLieu; // Pour le nom de lieu
+    @FXML
+    private PasswordField currentMdp;
+    @FXML
+    private PasswordField nouveauMdp;
+    @FXML
+    private PasswordField confirmationMdp;
+    /**cas ajouter un utilisateur
+    @FXML
+    private TextField idField;
 
+    @FXML
+    private TextField mdpField;
+
+    @FXML
+    private void handleSaveButtonAction() {
+        // Récupérer les valeurs des champs de texte
+        String identifiant = idField.getText();
+        String motdepasse = mdpField.getText();
+
+        // Créer un nouvel utilisateur
+        Utilisateur nouvelUtilisateur = new Utilisateur(identifiant, motdepasse);
+
+        // Tenter de sauvegarder l'utilisateur
+        boolean isSaved = nouvelUtilisateur.save();
+
+        if (isSaved) {
+            System.out.println("Utilisateur enregistré avec succès !");
+        } else {
+            System.out.println("Erreur lors de l'enregistrement de l'utilisateur.");
+        }
+    }*/
+
+    @FXML
+    public void handleChangePassword() {
+        String currentPassword = currentMdp.getText();
+        String newPassword = nouveauMdp.getText();
+        String confirmPassword = confirmationMdp.getText();
+        // Vérification des champs
+        if (currentPassword.isEmpty() || newPassword.isEmpty() || confirmPassword.isEmpty()) {
+            showAlert("Erreur", "Tous les champs doivent être remplis.");
+            return;
+        }
+
+        // Vérification que le nouveau mot de passe et sa confirmation correspondent
+        if (!newPassword.equals(confirmPassword)) {
+            showAlert("Erreur", "Le nouveau mot de passe et sa confirmation ne correspondent pas.");
+            return;
+        }
+
+        // Vérification du mot de passe actuel
+        if (!verifierMotDePasse(currentPassword)) {
+            showAlert("Erreur", "Le mot de passe actuel est incorrect.");
+            return;
+        }
+
+        // Hachage du nouveau mot de passe et mise à jour dans la base de données
+        if (modifierMotDePasse(newPassword)) {
+            showAlert("Succès", "Le mot de passe a été modifié avec succès !");
+        } else {
+            showAlert("Erreur", "Une erreur est survenue lors de la modification du mot de passe.");
+        }
+    }
+
+    // Méthode pour vérifier le mot de passe actuel
+    private boolean verifierMotDePasse(String motDePasse) {
+        String motDePasseHache = obtenirMotDePasseHache(); // Implémentez cette méthode pour récupérer le mot de passe haché.
+        return BCrypt.checkpw(motDePasse, motDePasseHache);
+    }
+
+    // Méthode pour modifier le mot de passe
+    private boolean modifierMotDePasse(String nouveauMotDePasse) {
+        String motDePasseHache = BCrypt.hashpw(nouveauMotDePasse, BCrypt.gensalt());
+        return mettreAJourMotDePasseDansBDD(motDePasseHache); // Implémentez cette méthode pour mettre à jour le mot de passe.
+    }
+    private String obtenirMotDePasseHache() {
+        // Connexion à la base de données et récupération du mot de passe haché
+        // Assurez-vous de récupérer le mot de passe pour l'utilisateur connecté
+        String motDePasseHache = null;
+        Connection connection = ConnexionBDD.initialiserConnexion();
+        if (connection != null) {
+            String query = "SELECT mdp FROM utilisateur WHERE identifiant = ?"; // Utilisez l'identifiant de la directrice
+            try {
+                PreparedStatement stmt = connection.prepareStatement(query);
+                stmt.setString(1, "admin"); // Remplacez par l'identifiant de la directrice
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    motDePasseHache = rs.getString("mdp");
+                }
+            } catch (SQLException e) {
+                System.err.println("Erreur lors de la récupération du mot de passe : " + e.getMessage());
+            }
+        }
+        return motDePasseHache;
+    }
+    private boolean mettreAJourMotDePasseDansBDD(String motDePasseHache) {
+        Connection connection = ConnexionBDD.initialiserConnexion();
+        if (connection != null) {
+            String updateQuery = "UPDATE utilisateur SET mdp = ? WHERE identifiant = ?"; // Assurez-vous d'utiliser l'identifiant approprié
+            try {
+                PreparedStatement stmt = connection.prepareStatement(updateQuery);
+                stmt.setString(1, motDePasseHache);
+                stmt.setString(2, "admin"); // Remplacez par l'identifiant de la directrice
+                int rowsUpdated = stmt.executeUpdate();
+                return rowsUpdated > 0; // Retourne true si la mise à jour a réussi
+            } catch (SQLException e) {
+                System.err.println("Erreur lors de la mise à jour du mot de passe : " + e.getMessage());
+                return false;
+            }
+        }
+        return false;
+    }
+
+    // Méthode pour afficher des alertes
+    private void showAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
     private void actualiserTable() {
         ObservableList<Creneau> listeCreneaux = FXCollections.observableArrayList(Creneau.getAllWeek());
         tableViewActivites.setItems(listeCreneaux);
