@@ -1,10 +1,23 @@
 ## 1. Introduction
 L'application est conçue pour gérer des créneaux d'activités, permettant aux utilisateurs de se connecter et de visualiser, modifier ou supprimer des créneaux. Elle utilise JavaFX pour l'interface utilisateur, offrant une expérience graphique agréable.
 
-## 2. Fonctionnalités Principales
+## 2. Prérequis Avant Démarrage
+Avant de démarrer l'application, il est essentiel de préparer la base de données. Voici les étapes à suivre :
+
+1. *Création de la Base de Données* :
+   - Un script SQL pour la création de la base de données de camping se trouve à la racine du projet.
+   - Exécutez ce script dans votre système de gestion de base de données (SGBD) pour créer les tables nécessaires.
+
+2. *Modification des Informations de Connexion* :
+   - Ouvrez le fichier ConnexionBDD.java dans votre projet.
+   - Modifiez les informations de connexion (URL, nom d'utilisateur, mot de passe) pour qu'elles correspondent à votre configuration de base de données.
+
+## 3. Fonctionnalités Principales
 - *Connexion Utilisateur*: 
   - L'utilisateur entre un identifiant et un mot de passe via des champs de texte. 
   - Un bouton de connexion permet de soumettre ces informations.
+  - *Identifiant par défaut* : admin
+  - *Mot de passe par défaut* : admin123
 
 - *Dashboard*:
   - *Accueil*: 
@@ -12,8 +25,17 @@ L'application est conçue pour gérer des créneaux d'activités, permettant aux
   - *Gestion des Créneaux*: 
     - Permet à l'utilisateur de visualiser, actualiser, modifier et supprimer des créneaux via une liste et des boutons d'action.
     - Des champs de texte permettent de saisir de nouvelles informations sur les créneaux, telles que l'heure, la date, la durée, le nombre de places, et le libellé de l'animation.
+  - *Gestion des Lieux*:
+    - Permet à l'utilisateur d'ajouter, modifier et supprimer des lieux.
+    - Affiche une liste des lieux disponibles avec des options pour la gestion des informations associées.
+  - *Gestion des Animateurs*:
+    - Permet à l'utilisateur d'ajouter, modifier et supprimer des animateurs.
+    - Affiche une liste des animateurs, avec la possibilité de consulter et de gérer leurs informations.
+  - *Profil*:
+    - Permet à l'utilisateur de gérer son profil, y compris la modification de son mot de passe.
+    - Inclut des options pour afficher et mettre à jour les informations de l'utilisateur connecté.
 
-## 3. Consignes d'Utilisation
+## 4. Consignes d'Utilisation
 - *Format de Date*: 
   - Les utilisateurs doivent entrer la date au format dd/MM/yyyy (jour/mois/année).
   
@@ -26,18 +48,18 @@ L'application est conçue pour gérer des créneaux d'activités, permettant aux
   - L'utilisateur peut naviguer entre les différents onglets du dashboard pour accéder aux informations et fonctionnalités nécessaires.
   - Les boutons d'action permettent d'exécuter des fonctions spécifiques, telles que l'actualisation, la modification ou la suppression de créneaux.
 
-## 4. Gestion des Données
+## 5. Gestion des Données
 - *Suppression de Créneaux et Lieux*:
   - La méthode delete() permet de supprimer un créneau ainsi que son lieu associé de la base de données. 
   - La méthode utilise des requêtes SQL préparées pour éviter les injections SQL et garantir la sécurité des opérations.
   - En cas d'erreur lors de l'exécution des requêtes, une alerte est affichée avec un message d'erreur, informant l'utilisateur du problème survenu.
 
-## 5. Interaction avec l'Interface Utilisateur
+## 6. Interaction avec l'Interface Utilisateur
 - *Contrôleur de Connexion*:
   - Le contrôleur HelloController gère les événements de l'interface utilisateur liés aux champs de connexion (identifiant et mot de passe).
   - En utilisant JavaFX, les interactions utilisateur déclenchent des actions définies, comme la validation des informations de connexion.
 
-## 6. Gestion des Animations et Lieux
+## 7. Gestion des Animations et Lieux
 - *Ajout d'Animations*:
   - La méthode buttonAjouterAnimation() permet d'ajouter une nouvelle animation à l'application. 
   - Si l'enregistrement de l'animation est réussi, une alerte de succès est affichée, et la liste des animations est mise à jour. En cas d'échec, une alerte d'erreur informe l'utilisateur.
@@ -55,16 +77,13 @@ L'application est conçue pour gérer des créneaux d'activités, permettant aux
   - Avant la suppression, une boîte de dialogue de confirmation est affichée pour éviter des suppressions accidentelles. 
   - En cas de succès, une alerte de confirmation est affichée ; sinon, une alerte d'erreur est présentée.
 
-## 7. Actualisation des Listes
+## 8. Actualisation des Listes
 - *Actualisation des Animateurs*:
   - La méthode actualisationListeListeAnimateur() met à jour la liste des animateurs affichée dans l'interface. 
   - Si aucun animateur n'est trouvé, un message est affiché dans la console.
 
 - *Mise à Jour des Animateurs*:
   - La méthode buttonActualiserAnimateur() appelle la méthode d'actualisation pour mettre à jour l'affichage des animateurs dans l'interface utilisateur.
-
-## 8. Conclusion
-L'application Java continue de se développer avec des fonctionnalités de gestion des données robustes, y compris l'ajout de méthodes pour supprimer des créneaux et gérer les interactions avec la base de données. Grâce à une interface utilisateur intuitive et à des alertes pour la gestion des erreurs, elle offre une expérience utilisateur fluide.
 
 ## 9. Gestion des Créneaux
 - *Modification de Créneaux*:
@@ -97,4 +116,4 @@ L'application Java continue de se développer avec des fonctionnalités de gesti
   - La méthode toString() est redéfinie pour fournir une représentation lisible d'un animateur, affichant son nom, prénom, email et numéro de téléphone.
 
 - *equals() et hashCode()*:
-  - Les méthodes equals() et hashCode() sont redéfinies pour permettre des comparaisons d'égalité et une utilisation correcte
+  - Les méthodes equals() et hashCode() sont redéfinies pour permettre des comparaisons d'égalité et une utilisation correcte des collections.
