@@ -397,6 +397,8 @@ public class DashboardController {
         if (confirmation.getResult() == yesButton) {
             libelleLieu.setText("");
             coordonneesLieu.setText("");
+            isedit=false;
+            idTemporaire=0;
         }
     }
 
@@ -850,6 +852,8 @@ public class DashboardController {
             liteViewAnimation.getSelectionModel().clearSelection();
             listviewLieuCreneau.getSelectionModel().clearSelection();
             listviewAnimateurCreneau.getSelectionModel().clearSelection();
+            isedit=false;
+            idTemporaire=0;
         }
     }
 }
