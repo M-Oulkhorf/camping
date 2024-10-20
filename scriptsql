@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Oct 20, 2024 at 08:48 PM
+-- Generation Time: Oct 20, 2024 at 09:16 PM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -146,7 +146,7 @@ CREATE TABLE `creneau` (
 --
 
 INSERT INTO `creneau` (`idCreneau`, `heureCreneau`, `dateCreneau`, `dureeCreneau`, `nbPlacesCreneau`, `idAnimation`, `idLieu`) VALUES
-(10, '18:00:00', '2024-10-29', 60, 20, 5, 5),
+(10, '18:00:00', '2024-10-29', 60, 25, 5, 5),
 (11, '20:00:00', '2024-10-30', 150, 100, 1, 1),
 (12, '09:00:00', '2024-10-31', 90, 40, 2, 2),
 (13, '10:00:00', '2024-11-04', 120, 50, 3, 3),
@@ -217,6 +217,7 @@ CREATE TABLE `lieu` (
 --
 
 INSERT INTO `lieu` (`idLieu`, `libelleLieu`, `coordoneesLieu`) VALUES
+(0, '--', '--'),
 (1, 'Salle des Fêtes', '123 Rue de la Lumière, 75001 Paris'),
 (2, 'Atelier Art', '456 Avenue des Arts, 75002 Paris'),
 (3, 'Studio Yoga', '789 Boulevard de la Santé, 75003 Paris'),
@@ -322,7 +323,7 @@ ALTER TABLE `creneau`
 -- AUTO_INCREMENT for table `lieu`
 --
 ALTER TABLE `lieu`
-  MODIFY `idLieu` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `idLieu` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Constraints for dumped tables
