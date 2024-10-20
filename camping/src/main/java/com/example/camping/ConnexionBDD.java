@@ -8,7 +8,7 @@ public class ConnexionBDD {
     private static String host = "localhost";
     private static String port = "3306";
     private static String username = "root";
-    private static String password = "";
+    private static String password = "root";
 
     public static Connection initialiserConnexion() {
         String URL = "jdbc:" + ConnexionBDD.driver + "://" + ConnexionBDD.host + ":" + ConnexionBDD.port + "/" + ConnexionBDD.database;

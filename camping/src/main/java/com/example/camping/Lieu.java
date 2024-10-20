@@ -4,7 +4,7 @@ import javafx.scene.control.Alert;
 
 import java.sql.*;
 import java.util.ArrayList;
-
+import java.util.Objects;
 
 
 public class Lieu {
@@ -194,6 +194,18 @@ public class Lieu {
     @Override
     public String toString() {
         return this.libelleLieu+" "+this.coordoneesLieu ;
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Lieu that = (Lieu) obj;
+        return idLieu == that.idLieu;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idLieu);
     }
 }
 

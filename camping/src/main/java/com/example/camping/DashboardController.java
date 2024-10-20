@@ -13,6 +13,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DashboardController {
     @FXML
@@ -426,30 +429,143 @@ public class DashboardController {
     public void clicBoutonActualiserCreneaux() {
         affichageListeViewCreneau();
     }
+    // Méthode pour récupérer l'animation par son ID
+    private Animation getAnimationById(int idAnimation) {
+        Animation animation = null;
+        Connection c = ConnexionBDD.initialiserConnexion();
+        try {
+            String query = "SELECT * FROM animation WHERE idAnimation = ?";
+            PreparedStatement stmt = c.prepareStatement(query);
+            stmt.setInt(1, idAnimation);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                animation = new Animation(rs.getInt("idAnimation"), rs.getString("libelleAnimation"));
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if (c != null) {
+                    c.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return animation;
+    }
+
+    // Méthode pour récupérer le lieu par son ID
+    private Lieu getLieuById(int idLieu) {
+        Lieu lieu = null;
+        Connection c = ConnexionBDD.initialiserConnexion();
+        try {
+            String query = "SELECT * FROM lieu WHERE idLieu = ?";
+            PreparedStatement stmt = c.prepareStatement(query);
+            stmt.setInt(1, idLieu);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                lieu = new Lieu(rs.getInt("idLieu"), rs.getString("libelleLieu"), rs.getString("coordoneesLieu"));
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if (c != null) {
+                    c.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return lieu;
+    }
+
+    // Méthode pour récupérer les animateurs associés à un créneau
+    private List<Animateur> getAnimateursByCreneauId(int idCreneau) {
+        List<Animateur> animateurs = new ArrayList<>();
+        Connection c = ConnexionBDD.initialiserConnexion();
+        try {
+            String query = "SELECT a.* FROM animateur a JOIN animer an ON a.idAnimateur = an.idAnimateur WHERE an.idCreneau = ?";
+            PreparedStatement stmt = c.prepareStatement(query);
+            stmt.setInt(1, idCreneau);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Animateur animateur = new Animateur(rs.getInt("idAnimateur"), rs.getString("nomAnimateur"), rs.getString("prenomAnimateur"), rs.getString("mailAnimateur"), rs.getString("telephoneAnimateur"));
+                animateurs.add(animateur);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            try {
+                if (c != null) {
+                    c.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return animateurs;
+    }
+
     @FXML
     public void clicBoutonModifierCreneau() {
         ObservableList<Creneau> selectedCreneaux = listviewCreneaux.getSelectionModel().getSelectedItems();
         if (!selectedCreneaux.isEmpty()) {
-            // Pour chaque créneau sélectionné, mettre à jour les champs et les autres ListView
-            for (Creneau c : selectedCreneaux) {
-                heureField.setText(c.getHeureCreneau().toString());
-                dateField.setText(c.getDateCreneau().toString());
-                dureeField.setText(String.valueOf(c.getDureeCreneau()));
-                nbplaceField.setText(String.valueOf(c.getNbPlacesCreneau()));
+            Creneau c = selectedCreneaux.get(0); // Prendre le premier créneau sélectionné
+            isedit=true;
+            idTemporaire=c.getIdCreneau();
+            heureField.setText(c.getHeureCreneau().toString());
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            String formattedDate = c.getDateCreneau().format(dateFormatter);
+            dateField.setText(formattedDate);
+            dureeField.setText(String.valueOf(c.getDureeCreneau()));
+            nbplaceField.setText(String.valueOf(c.getNbPlacesCreneau()));
+            // Récupérer et sélectionner l'animation et le lieu associés
+            Animation animationSelectionnee = getAnimationById(c.getIdAnimation());
+            if (animationSelectionnee != null) {
+                liteViewAnimation.getSelectionModel().select(animationSelectionnee);
+            } else {
+                Alert a = new Alert(Alert.AlertType.WARNING);
+                a.setTitle("Attention");
+                a.setContentText("Animation non trouvée pour l'ID : " + c.getIdAnimation());
+                a.showAndWait();
+            }
+
+            Lieu lieuSelectionne = getLieuById(c.getIdLieu());
+            if (lieuSelectionne != null) {
+                listviewLieuCreneau.getSelectionModel().select(lieuSelectionne);
+            } else {
+                Alert a = new Alert(Alert.AlertType.WARNING);
+                a.setTitle("Attention");
+                a.setContentText("Lieu non trouvé pour l'ID : " + c.getIdLieu());
+                a.showAndWait();
+            }
+
+            // Sélectionner les animateurs associés
+            List<Animateur> animateursAssocies = getAnimateursByCreneauId(c.getIdCreneau());
+            if (animateursAssocies != null && !animateursAssocies.isEmpty()) {
+                for (Animateur animateur : animateursAssocies) {
+                    listviewAnimateurCreneau.getSelectionModel().select(animateur);
+                }
+            } else {
+                Alert a = new Alert(Alert.AlertType.WARNING);
+                a.setTitle("Attention");
+                a.setContentText("Aucun animateur associé trouvé pour le créneau.");
+                a.showAndWait();
             }
         } else {
-            // Afficher une alerte si aucun créneau n'est sélectionné
             Alert a = new Alert(Alert.AlertType.WARNING);
             a.setTitle("Attention");
             a.setContentText("Vous n'avez sélectionné aucun créneau dans la liste.");
             a.showAndWait();
         }
     }
+
     @FXML
     public void clicBoutonSupprimerCreneau() {
-        Creneau c = (Creneau) listviewCreneaux.getSelectionModel().getSelectedItem();
+        Creneau c = listviewCreneaux.getSelectionModel().getSelectedItem();
         if (c != null) {
-            // Demande de confirmation avant de supprimer
             Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
             confirmation.setTitle("Confirmation");
             confirmation.setContentText("Êtes-vous sûr de vouloir supprimer ce créneau ?");
@@ -474,7 +590,6 @@ public class DashboardController {
                 }
             }
         } else {
-            // Alerte si aucun créneau n'est sélectionné
             Alert a = new Alert(Alert.AlertType.WARNING);
             a.setTitle("Attention");
             a.setContentText("Vous n'avez sélectionné aucun créneau dans la liste.");
@@ -483,37 +598,119 @@ public class DashboardController {
     }
     @FXML
     public void clicBoutonEnregistrerCreneau() {
-        // Récupérer les données des champs texte
+        // Récupération des données des champs texte
         String heure = heureField.getText();
         String date = dateField.getText();
         String duree = dureeField.getText();
         String nbPlaces = nbplaceField.getText();
+
+        // Validation des entrées
+        if (heure.isEmpty() || date.isEmpty() || duree.isEmpty() || nbPlaces.isEmpty()) {
+            Alert a = new Alert(Alert.AlertType.WARNING);
+            a.setTitle("Avertissement");
+            a.setContentText("Veuillez remplir tous les champs.");
+            a.showAndWait();
+            return;
+        }
+
+        // Récupération de l'animation sélectionnée
         Animation animationSelectionnee = liteViewAnimation.getSelectionModel().getSelectedItem();
         int idAnimation = animationSelectionnee != null ? animationSelectionnee.getIdAnimation() : -1;
+
+        // Récupération du lieu sélectionné
         Lieu lieuSelectionne = listviewLieuCreneau.getSelectionModel().getSelectedItem();
         int idLieu = lieuSelectionne != null ? lieuSelectionne.getIdLieu() : -1;
-        // Créer un nouvel objet Creneau ou modifier un existant
-        LocalTime heureCr=LocalTime.parse(heure);
-        LocalDate dateCr=LocalDate.parse(date);
-        Creneau c = new Creneau(0, heureCr, dateCr, Integer.parseInt(duree), Integer.parseInt(nbPlaces), idAnimation, idLieu);
 
-        boolean resultat = c.save(); // Enregistrement du créneau
+        // Création ou modification d'un objet Creneau
+        LocalTime heureCr = LocalTime.parse(heure);
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        LocalDate dateCr = LocalDate.parse(date, dateFormatter);
+
+        // Utilisation de idTemporaire si en mode édition
+        Creneau c = new Creneau(isedit ? idTemporaire : 0, heureCr, dateCr, Integer.parseInt(duree), Integer.parseInt(nbPlaces), idAnimation, idLieu);
+
+        // Enregistrement du créneau
+        boolean resultat = c.save();
+        isedit=false;
+        idTemporaire=0;
         if (resultat) {
+            // Récupération de l'ID du créneau enregistré
+            int idCreneau = c.getIdCreneau();
+
+            // Gestion des animateurs associés
+            ObservableList<Animateur> animateursSelectionnes = listviewAnimateurCreneau.getSelectionModel().getSelectedItems();
+
+            // Ajout des animateurs liés
+            for (Animateur animateur : animateursSelectionnes) {
+                updateAnimateurCreneau(animateur.getIdAnimateur(), idCreneau);
+            }
+
+            // Afficher une alerte de succès
             Alert a = new Alert(Alert.AlertType.CONFIRMATION);
             a.setTitle("Succès");
             a.setContentText("Le créneau a été enregistré avec succès.");
             a.showAndWait();
-            affichageListeViewCreneau(); // Rafraîchit la liste des créneaux
+
+            // Rafraîchir la liste des créneaux
+            affichageListeViewCreneau();
+            heureField.setText("");
+            dateField.setText("");
+            dureeField.setText("");
+            nbplaceField.setText("");
+            liteViewAnimation.getSelectionModel().clearSelection();
+            listviewLieuCreneau.getSelectionModel().clearSelection();
+            listviewAnimateurCreneau.getSelectionModel().clearSelection();
         } else {
+            // Afficher une alerte d'erreur
             Alert a = new Alert(Alert.AlertType.ERROR);
             a.setTitle("Erreur");
             a.setContentText("Une erreur est survenue pendant l'enregistrement.");
             a.showAndWait();
         }
     }
+
+    // Méthode pour mettre à jour l'association animateur-créneau
+    private void updateAnimateurCreneau(int idAnimateur, int idCreneau) {
+        Connection c = ConnexionBDD.initialiserConnexion();
+        if (c != null) {
+            try {
+                // Vérifier si l'association existe déjà
+                String checkQuery = "SELECT COUNT(*) AS count FROM animer WHERE idAnimateur = ? AND idCreneau = ?";
+                PreparedStatement checkStmt = c.prepareStatement(checkQuery);
+                checkStmt.setInt(1, idAnimateur);
+                checkStmt.setInt(2, idCreneau);
+                ResultSet rs = checkStmt.executeQuery();
+                rs.next();
+                int count = rs.getInt("count");
+
+                // Si l'association n'existe pas, l'ajouter
+                if (count == 0) {
+                    String insertQuery = "INSERT INTO animer (idAnimateur, idCreneau) VALUES (?, ?)";
+                    PreparedStatement insertStmt = c.prepareStatement(insertQuery);
+                    insertStmt.setInt(1, idAnimateur);
+                    insertStmt.setInt(2, idCreneau);
+                    insertStmt.executeUpdate();
+                }
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+                Alert a = new Alert(Alert.AlertType.ERROR);
+                a.setTitle("Erreur");
+                a.setContentText("Erreur d'association animateur-créneau : " + ex.getMessage());
+                a.showAndWait();
+            } finally {
+                // Fermer la connexion
+                try {
+                    if (c != null) {
+                        c.close();
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
     @FXML
     public void clicBoutonAnnulerCreneau() {
-        // Demande confirmation avant d'annuler
         Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
         confirmation.setTitle("Confirmation");
         confirmation.setContentText("Êtes-vous sûr de vouloir annuler les modifications en cours ?");
@@ -523,13 +720,13 @@ public class DashboardController {
         confirmation.showAndWait();
 
         if (confirmation.getResult() == yesButton) {
-            // Effacer les champs texte si l'utilisateur confirme
             heureField.setText("");
             dateField.setText("");
             dureeField.setText("");
             nbplaceField.setText("");
             liteViewAnimation.getSelectionModel().clearSelection();
             listviewLieuCreneau.getSelectionModel().clearSelection();
+            listviewAnimateurCreneau.getSelectionModel().clearSelection();
         }
     }
 }

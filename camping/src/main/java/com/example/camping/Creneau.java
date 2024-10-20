@@ -165,10 +165,11 @@ public class Creneau {
                 ResultSet res = checkStmt.executeQuery();
                 res.next();
                 int exists = res.getInt("existe");
+
                 if (exists == 0) {
                     // Si le créneau n'existe pas, l'insérer
                     String insertQuery = "INSERT INTO creneau (heureCreneau, dateCreneau, dureeCreneau, nbPlacesCreneau, idAnimation, idLieu) VALUES (?, ?, ?, ?, ?, ?)";
-                    PreparedStatement insertStmt = c.prepareStatement(insertQuery);
+                    PreparedStatement insertStmt = c.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS);
                     insertStmt.setTime(1, Time.valueOf(this.heureCreneau));
                     insertStmt.setDate(2, Date.valueOf(this.dateCreneau));
                     insertStmt.setInt(3, this.dureeCreneau);
@@ -176,6 +177,12 @@ public class Creneau {
                     insertStmt.setInt(5, this.idAnimation);
                     insertStmt.setInt(6, this.idLieu);
                     insertStmt.executeUpdate();
+
+                    // Récupérer l'ID généré
+                    ResultSet generatedKeys = insertStmt.getGeneratedKeys();
+                    if (generatedKeys.next()) {
+                        this.idCreneau = generatedKeys.getInt(1); // Assurez-vous que l'idCreneau est mis à jour
+                    }
                 } else {
                     // Si le créneau existe, le mettre à jour
                     String updateQuery = "UPDATE creneau SET heureCreneau = ?, dateCreneau = ?, dureeCreneau = ?, nbPlacesCreneau = ?, idAnimation = ?, idLieu = ? WHERE idCreneau = ?";
@@ -197,17 +204,34 @@ public class Creneau {
                 a.setContentText("Erreur survenue : " + ex.getMessage());
                 a.showAndWait();
                 return false;
+            } finally {
+                // Fermez la connexion si nécessaire
+                try {
+                    if (c != null) {
+                        c.close();
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
         } else {
             return false;
         }
     }
 
+
     // Méthode pour supprimer un créneau
     public boolean delete() {
         Connection c = ConnexionBDD.initialiserConnexion();
         if (c != null) {
             try {
+                // Supprimer les associations dans la table animer
+                String deleteAssociationsQuery = "DELETE FROM animer WHERE idCreneau = ?";
+                PreparedStatement deleteAssociationsStmt = c.prepareStatement(deleteAssociationsQuery);
+                deleteAssociationsStmt.setInt(1, this.idCreneau);
+                deleteAssociationsStmt.executeUpdate();
+
+                // Supprimer le créneau de la table creneau
                 String deleteQuery = "DELETE FROM creneau WHERE idCreneau = ?";
                 PreparedStatement deleteStmt = c.prepareStatement(deleteQuery);
                 deleteStmt.setInt(1, this.idCreneau);
@@ -220,6 +244,15 @@ public class Creneau {
                 a.setContentText("Erreur survenue : " + ex.getMessage());
                 a.showAndWait();
                 return false;
+            } finally {
+                // Fermer la connexion
+                try {
+                    if (c != null) {
+                        c.close();
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
         } else {
             return false;

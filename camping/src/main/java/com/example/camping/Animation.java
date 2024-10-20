@@ -4,6 +4,7 @@ import javafx.scene.control.Alert;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Animation {
     private int idAnimation;
@@ -101,5 +102,17 @@ public class Animation {
     @Override
     public String toString() {
         return this.libelleAnimation;
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Animation that = (Animation) obj;
+        return idAnimation == that.idAnimation;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idAnimation);
     }
 }

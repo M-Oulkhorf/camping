@@ -4,7 +4,7 @@ import javafx.scene.control.Alert;
 
 import java.sql.*;
 import java.util.ArrayList;
-
+import java.util.Objects;
 
 
 public class Animateur {
@@ -235,5 +235,18 @@ public class Animateur {
     public String toString() {
         return this.nomAnimateur+" "+this.prenomAnimateur+"  "+this.mailAnimateur+"  "+this.telephoneAnimateur;
     }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Animateur that = (Animateur) obj;
+        return idAnimateur == that.idAnimateur;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idAnimateur);
+    }
+
 
 }
